@@ -41,7 +41,6 @@ iguales _ _ = False
 -------
 
 siguiente :: Dir -> Dir
---Dada una dirección devuelve la siguiente. Es una funcion total
 siguiente Norte = Este
 siguiente Este = Sur
 siguiente Sur = Oeste
