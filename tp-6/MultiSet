@@ -1,0 +1,60 @@
+module Multiset
+    (Multiset, emptyMS, addMS, ocurrencesMS
+             , unionMS, intersectionMS, multiSet2List) 
+  where
+
+import Map
+
+data Multiset a = MS (Map a Int)
+
+emptyMS      :: MultiSet a
+  -- PROP.: describe el multiset vacío (todos los elementos en 0)
+
+addMS        :: Ord a => a -> MultiSet a -> MultiSet a
+  -- PROP.: describe el multiset resultando de agregar el elemento 
+  --        al multiset dado, incrementando su cantidad de apariciones
+occurencesMS :: Ord a => a -> MultiSet a -> Int
+  -- PROP.: describe la cantidad de apariciones del elemento en el multiset
+unionMS      :: Ord a => MultiSet a -> MultiSet a -> MultiSet a
+intersectMS  :: Ord a => MultiSet a -> MultiSet a -> MultiSet a
+ms2list      :: Multiset a -> [(a,Int)]
+
+
+emptyMS                      = MS emptyM 
+addMS n (MS mp)              = MS addMsMap n mp 
+occurencesMS n (MS mp)       = fromJust (lookupM n mp) 
+unionMS (MS mp) (MS mp2)     = MS unionsMaps mp mp2
+-- Prop: dados dos multiconjuntos devuelve un multiconjunto con todos los elementos de ambos multiconjuntos.
+intersectMS (MS mp) (MS mp2) = MS intersectionMS' mp mp2 
+-- Prop: dados dos multiconjuntos devuelve el multiconjunto de elementos que ambos
+--multiconjuntos tienen en común.
+ms2list (MS mp) (MS mp2)     =
+
+
+addMsMap :: Ord a => a -> Map a Int -> Map a Int
+addMsMap n mp = case lookupM n mp of 
+                Just v -> assocM n (v+1) mp 
+                Nothing -> assocM n 1 mp 
+
+unionsMaps :: Ord a => Map a Int ->  Map a Int -> Map a Int
+unionsMaps mp mp' = unionsMapsConk (keys mp) mp mp2
+
+unionsMapsConk :: Ord a => [k] -> Map a Int ->  Map a Int -> Map a Int
+unionsMapsConk [] mp mp2 = mp2
+unionsMapsConk (k:ks) mp mp2 =  
+                        let v = fromJust (lookupM k mp) in 
+                        case lookupM k mp2 of 
+                        Just v' -> assocM k (v+v') (unionsMapsConk ks mp mp2)
+                        Nothing -> assocM k v (unionsMapsConk ks mp mp2)                      
+
+intersectionMS' :: Ord a => Map a Int ->  Map a Int -> Map a Int
+intersectionMS'  mp mp' = intersecionMapsConk (keys mp) mp mp2
+
+
+intersecionMapsConk :: Ord a => [k] -> Map a Int ->  Map a Int -> Map a Int
+intersecionMapsConk [] mp mp2 = emptyM
+intersecionMapsConk (k:ks) mp mp2 =  
+                        let v = fromJust (lookupM k mp) in 
+                        case lookupM k mp2 of 
+                        Just v' -> assocM k (min v v') (intersecionMapsConk ks mp mp2) -- TOMO EL MIN YA QUE EN LA INTERSECCION DE LOS MULTI SE TOMA EL MENOR 
+                        Nothing -> intersecionMapsConk ks mp mp2

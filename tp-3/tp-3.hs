@@ -105,7 +105,7 @@ hayTesoroEn  n camino =  pasosHastaTesoro camino == n
 
 
 alMenosNTesoros :: Int -> Camino -> Bool
-alMenosNTesoros 0 (Fin)          = True      --- ===== DUDA 
+alMenosNTesoros 0 _          = True      --- ===== DUDA 
 alMenosNTesoros n (Fin)          = False 
 alMenosNTesoros n (Cofre objs c) = if tieneTesoro objs
                                    then alMenosNTesoros (n-1) c 
