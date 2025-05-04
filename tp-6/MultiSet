@@ -16,8 +16,8 @@ addMS        :: Ord a => a -> MultiSet a -> MultiSet a
 occurencesMS :: Ord a => a -> MultiSet a -> Int
   -- PROP.: describe la cantidad de apariciones del elemento en el multiset
 unionMS      :: Ord a => MultiSet a -> MultiSet a -> MultiSet a
-intersectMS  :: Ord a => MultiSet a -> MultiSet a -> MultiSet a
-ms2list      :: Multiset a -> [(a,Int)]
+intersectionMS  :: Ord a => MultiSet a -> MultiSet a -> MultiSet a
+multiSetToList      :: Multiset a -> [(a,Int)]
 
 
 emptyMS                      = MS emptyM 
@@ -25,11 +25,10 @@ addMS n (MS mp)              = MS addMsMap n mp
 occurencesMS n (MS mp)       = fromJust (lookupM n mp) 
 unionMS (MS mp) (MS mp2)     = MS unionsMaps mp mp2
 -- Prop: dados dos multiconjuntos devuelve un multiconjunto con todos los elementos de ambos multiconjuntos.
-intersectMS (MS mp) (MS mp2) = MS intersectionMS' mp mp2 
+intersectionMS (MS mp) (MS mp2) = MS intersectionMS' mp mp2 
 -- Prop: dados dos multiconjuntos devuelve el multiconjunto de elementos que ambos
 --multiconjuntos tienen en común.
-ms2list (MS mp) (MS mp2)     =
-
+ms2list (MS mp)  = listOfMultiSet mp 
 
 addMsMap :: Ord a => a -> Map a Int -> Map a Int
 addMsMap n mp = case lookupM n mp of 
@@ -58,3 +57,16 @@ intersecionMapsConk (k:ks) mp mp2 =
                         case lookupM k mp2 of 
                         Just v' -> assocM k (min v v') (intersecionMapsConk ks mp mp2) -- TOMO EL MIN YA QUE EN LA INTERSECCION DE LOS MULTI SE TOMA EL MENOR 
                         Nothing -> intersecionMapsConk ks mp mp2
+
+
+listOfMultiSet :: Map a Int ->  [(a, Int)]
+listOfMultiSet mp = listOfMultiSet' (keys mp) mp 
+
+
+listOfMultiSet' :: [k] -> Map a Int  -> [(a, Int)]
+listOfMultiSet' [] mp = []
+listOfMultiSet' (k:ks) mp =  
+              let v = fromJust(lookupM k mp) in 
+               (k,v) : listOfMultiSet' ks mp 
+
+
